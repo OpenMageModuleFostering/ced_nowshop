@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NowShop
+ *
+ * NOTICE OF LICENS
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to support@nowshop.com so we can send you a copy immediately.
+ *
+ * @category    NowShop
+ * @package     NowShop_NowShopShipping
+ * @author 		Asheesh Singh<asheeshsingh@cedcoss.com>
+ * @copyright   Copyright NowShop 2012 - 2014 (http://nowshop.com/)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+	<modules>
+		<NowShop_NowShopShipping>
+			<version>1.0.0</version>
+			<author>ASHEESH SINGH (asheeshsingh@cedcoss.com)</author>
+		</NowShop_NowShopShipping>
+	</modules>
+	<global>
+		<models>
+			<nowshopshipping>
+				<class>NowShop_NowShopShipping_Model</class>
+			</nowshopshipping>
+			<shipping>
+				<rewrite>
+					<config>NowShop_NowShopShipping_Model_Shipping_Config</config>
+				</rewrite>
+			</shipping>
+			<sales>
+				<rewrite>
+					<quote_address>NowShop_NowShopShipping_Model_Sales_Quote_Address</quote_address>
+				</rewrite>
+			</sales>
+		</models>
+		<resources>
+			<nowshopshipping_setup>
+				<setup>
+					<module>NowShop_NowShopShipping</module>
+				</setup>
+				<connection>
+					<use>core_setup</use>
+				</connection>
+			</nowshopshipping_setup>
+			<nowshopshipping_write>
+				<connection>
+					<use>core_write</use>
+				</connection>
+			</nowshopshipping_write>
+			<nowshopshipping_read>
+				<connection>
+					<use>core_read</use>
+				</connection>
+			</nowshopshipping_read>
+		</resources>
+	</global>
+	<default>
+		<carriers>
+			<nowshop>
+				<active>1</active>
+				<model>nowshopshipping/carrier_nowshop</model>
+				<title>Now Shop</title>
+			</nowshop>
+		</carriers>
+	</default>
+</config>

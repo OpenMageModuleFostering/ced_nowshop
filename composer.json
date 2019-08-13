@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/Ced_NowShop",
+    "type": "magento-module",
+    "license": "Open-Software-License-(OSL-3.0)",
+    "homepage": "",
+    "description": "NowShop Integration",
+    "authors": [
+    {
+        "name": "Nowshop",
+        "email": "dan@nowshop.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}

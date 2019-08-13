@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+		<NowShop_NowShopShipping>
+			<active>true</active>
+            <codePool>community</codePool>
+		</NowShop_NowShopShipping>
+    </modules>
+</config>

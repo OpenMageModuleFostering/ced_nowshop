@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NowShop
+ *
+ * NOTICE OF LICENS
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to support@nowshop.com so we can send you a copy immediately.
+ *
+ * @category    NowShop
+ * @package     NowShop_Synchronize
+ * @author 		Asheesh Singh<asheeshsingh@cedcoss.com>
+ * @copyright   Copyright NowShop 2012 - 2014 (http://nowshop.com/)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+	<modules>
+		<NowShop_Synchronize>
+			<version>0.0.3</version>
+			<author>ASHEESH SINGH (asheeshsingh@cedcoss.com)</author>
+		</NowShop_Synchronize>
+	</modules>
+	<frontend>
+		<routers>
+			<nowshop>
+				<use>standard</use>
+				<args>
+					<module>NowShop_Synchronize</module>
+					<frontName>nowshop</frontName>
+				</args>
+			</nowshop>
+		</routers>
+	</frontend>
+	<admin>
+		<routers>
+			<nowshop>
+				<use>admin</use>
+				<args>
+					<module>NowShop_Synchronize</module>
+					<frontName>nowshop</frontName>
+				</args>
+			</nowshop>
+		</routers>
+	</admin>
+	<adminhtml>
+		<translate>
+			<modules>
+				<nowshop>
+					<files>
+						<default>NowShop_Synchronize.csv</default>
+					</files>
+				</nowshop>
+			</modules>
+		</translate>
+		<layout>
+			<updates>
+				<nowshop>
+					<file>nowshop.xml</file>
+				</nowshop>
+			</updates>
+		</layout>
+	</adminhtml>
+	<global>
+		<helpers>
+			<nowshop>
+				<class>NowShop_Synchronize_Helper</class>
+			</nowshop>
+		</helpers>
+		<blocks>
+			<nowshop>
+				<class>NowShop_Synchronize_Block</class>
+			</nowshop>
+		</blocks>
+		<models>
+			<nowshop>
+				<class>NowShop_Synchronize_Model</class>
+				<resourceModel>nowshop_mysql4</resourceModel>
+			</nowshop>
+			<nowshop_mysql4>
+				<class>NowShop_Synchronize_Model_Mysql4</class>
+				<entities>
+					<feed>
+						<table>nowshop_product_feed</table>
+					</feed>
+					<cfeed>
+						<table>nowshop_category_feed</table>
+					</cfeed>
+				</entities>
+		    </nowshop_mysql4>
+		</models>
+		<resources>
+			<nowshop_synchronize_setup>
+				<setup>
+					<module>NowShop_Synchronize</module>
+					<class>NowShop_Synchronize_Model_Mysql4_Setup</class>
+				</setup>
+			</nowshop_synchronize_setup>
+		</resources>
+	</global>
+	<default>
+		<nowshop>
+			<setting>
+				<isocode>GB</isocode>
+			</setting>
+			<productfeed>
+				<qty>10</qty>
+				<min>0</min>
+				<max>4</max>
+				<brand>retailer_store_name</brand>
+			</productfeed>
+			<order_api>
+				<can_invoice>0</can_invoice>
+				<can_email>0</can_email>
+			</order_api>	
+		</nowshop>
+	</default>
+</config>

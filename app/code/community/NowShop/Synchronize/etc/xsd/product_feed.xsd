@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xsd:element name="products" type="products_type"/>
+
+  <xsd:complexType name="products_type">
+    <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+      <xsd:element ref="product"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="product" type="product_type"/>
+
+  <xsd:complexType name="product_type">
+    <xsd:all>
+      <xsd:element name="sku" type="xsd:string"/>
+      <xsd:element name="type" type="type_type"/>
+      <xsd:element name="title" type="xsd:string"/>
+      <xsd:element name="description" type="xsd:string"/>
+      <xsd:element name="parentsku" type="xsd:string" minOccurs="0" nillable="true"/>
+      <xsd:element name="brand" type="xsd:string"/>
+      <xsd:element name="shipping" type="shipping_type" minOccurs="0"/>
+      <xsd:element name="weight" type="weight_type" minOccurs="0"/>
+      <xsd:element name="url" type="http" minOccurs="0"/>
+      <xsd:element name="ean" type="ean_type" minOccurs="0" nillable="true"/>
+      <xsd:element name="isbn10" type="isbn10_type" minOccurs="0" nillable="true"/>
+      <xsd:element name="isbn13" type="isbn13_type" minOccurs="0" nillable="true"/>
+      <xsd:element name="pricing" type="pricing_type" minOccurs="0" nillable="true"/>
+      <xsd:element name="stock" type="stock_type" minOccurs="0" nillable="true"/>
+      <xsd:element name="images" type="images_type" minOccurs="0"/>
+      <xsd:element name="datasheet" type="datasheet_type" minOccurs="0" nillable="true"/>
+      <xsd:element name="attributes" type="attribute_type" minOccurs="0"/>
+      <xsd:element name="variants" type="variant_type" minOccurs="0" nillable="true"/>
+      <xsd:element name="categories" type="categories_type" minOccurs="0" nillable="true"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:simpleType name="type_type">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="master"/>
+      <xsd:enumeration value="variant"/>
+      <xsd:enumeration value="simple"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="shipping_type">
+    <xsd:attribute name="min" type="xsd:nonNegativeInteger" use="required"></xsd:attribute>
+    <xsd:attribute name="max" type="xsd:nonNegativeInteger" use="required"></xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="weight_type">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:float">
+        <xsd:attribute name="unit">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="g"/>
+              <xsd:enumeration value="lb"/>
+              <xsd:enumeration value="kg"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:simpleType name="ean_type">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d{13}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="isbn10_type">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d{10}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="isbn13_type">
+    <xsd:union memberTypes="ean_type"/>
+  </xsd:simpleType>
+
+  <xsd:complexType name="pricing_type">
+    <xsd:all>
+      <xsd:element name="price" type="xsd:decimal"/>
+      <xsd:element name="originalprice" type="xsd:decimal" minOccurs="0" nillable="true"/>
+      <xsd:element name="shippingprice" type="xsd:decimal" minOccurs="0" nillable="true"/>
+    </xsd:all>
+    <xsd:attribute name="currency">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="NOK"/>
+          <xsd:enumeration value="SEK"/>
+          <xsd:enumeration value="DKK"/>
+          <xsd:enumeration value="EUR"/>
+          <xsd:enumeration value="USD"/>
+          <xsd:enumeration value="GBP"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="isvatincluded" type="xsd:boolean" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="stock_type">
+    <xsd:all>
+      <xsd:element name="quantity" type="xsd:integer" minOccurs="0" nillable="true"/>
+      <xsd:element name="enablestocklimitation" type="xsd:boolean" minOccurs="0" nillable="true"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:simpleType name="http">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="(http|https)://.+"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="optional_http">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="((http|https)://.+)?"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="images_type">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="image">
+        <xsd:complexType>
+          <xsd:attribute name="url" type="optional_http" use="required"/>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="reusefrommaster" type="xsd:boolean"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="datasheet_type">
+    <xsd:sequence maxOccurs="unbounded">
+      <xsd:element name="section">
+        <xsd:complexType>
+          <xsd:sequence maxOccurs="unbounded">
+            <xsd:element name="data">
+              <xsd:complexType>
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                <xsd:attribute name="value" type="xsd:string" use="required"/>
+                <xsd:attribute name="description" type="xsd:string"/>
+                <xsd:attribute name="type" type="xsd:string"/>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+          <xsd:attribute name="name" type="xsd:string"/>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="name" type="xsd:string"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="attribute_type">
+    <xsd:sequence maxOccurs="unbounded">
+      <xsd:element name="attribute">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="variant_type">
+    <xsd:sequence maxOccurs="unbounded">
+      <xsd:element name="variant">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="categories_type">
+    <xsd:sequence maxOccurs="unbounded">
+      <xsd:element name="category">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+              <xsd:attribute name="id" type="xsd:string" use="required"/>
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

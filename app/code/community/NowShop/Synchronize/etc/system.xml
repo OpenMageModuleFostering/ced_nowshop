@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NowShop
+ *
+ * NOTICE OF LICENS
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to support@nowshop.com so we can send you a copy immediately.
+ *
+ * @category    NowShop
+ * @package     NowShop_Synchronize
+ * @author 		Asheesh Singh<asheeshsingh@cedcoss.com>
+ * @copyright   Copyright NowShop 2012 - 2014 (http://nowshop.com/)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+	<tabs>
+        <nowshop translate="label" module="nowshop">
+            <label>Now Shop Integration</label>
+            <sort_order>100</sort_order>
+        </nowshop>
+    </tabs>
+	<sections>
+		<nowshop_account translate="label" module="nowshop">
+            <label>Retailer Configuration</label>
+            <tab>nowshop</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>10</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+			<groups>
+				<setting translate="label" module="nowshop">
+                    <label>General Setting</label>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+						<debug translate="label" module="nowshop">
+                            <label>Debug Mode</label>
+                            <frontend_type>select</frontend_type>
+							<config_path>nowshop/setting/debug</config_path>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </debug>
+						<isocode translate="label" module="nowshop">
+                            <label>Country</label>
+                            <frontend_type>select</frontend_type>
+							<config_path>nowshop/setting/isocode</config_path>
+							<source_model>nowshop/system_config_source_isocode</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </isocode>
+                    </fields>
+                </setting>
+				<ftp_credentials translate="label" module="nowshop">
+                    <label>Retailer Ftp Credentials</label>
+                    <sort_order>15</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+						<host translate="label" module="nowshop">
+                            <label>Host</label>
+                            <frontend_type>text</frontend_type>
+							<config_path>nowshop/ftp/host</config_path>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </host>
+						<username translate="label" module="nowshop">
+                            <label>Ftp Username</label>
+                            <frontend_type>text</frontend_type>
+							<config_path>nowshop/ftp/username</config_path>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </username>
+						<password translate="label" module="nowshop">
+                            <label>Ftp Password</label>
+                            <frontend_type>password</frontend_type>
+							<config_path>nowshop/ftp/password</config_path>
+							<comment><![CDATA[<button style="margin-top: 5px;" onclick="javascript:window.open('https://nowshop.com/settings/edit', 'apiwizard','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, ,left=100, top=100, width=380, height=470'); return false;" class="scalable" type="button" id="nowshop_retailer_ftp_wizard">
+												<span><span><span>Get Ftp Credentials from NowShop </span></span></span>
+											  </button>
+											 ]]>
+							</comment>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </password>
+                    </fields>
+                </ftp_credentials>
+				<product translate="label" module="nowshop">
+                    <label>Product Feed Setting</label>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <feed translate="label comment" module="nowshop">
+                            <label>Default Allowed Qty</label>
+                            <frontend_type>text</frontend_type>
+							<config_path>nowshop/productfeed/qty</config_path>
+                            <sort_order>1</sort_order>
+							<comment>Default Quantity for Product feed generation.</comment>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </feed>
+						<allowed_brand translate="label comment" module="nowshop">
+                            <label>Brand Attribute</label>
+                            <frontend_type>select</frontend_type>
+							<source_model>nowshop/system_config_source_brand</source_model>
+							<config_path>nowshop/productfeed/brand</config_path>
+                            <sort_order>2</sort_order>
+							<comment>Product's attributes which is used for brand in product feed generation.First brand option is your store name.</comment>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </allowed_brand>
+						<min translate="label comment" module="nowshop">
+                            <label>Minimum Shipping day(s)</label>
+                            <frontend_type>text</frontend_type>
+							<config_path>nowshop/productfeed/min</config_path>
+                            <sort_order>3</sort_order>
+							<comment>Minimum number of days before the product is shipped.0 indicates same day shipping. </comment>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </min>
+						<max translate="label comment" module="nowshop">
+                            <label>Maximum Shipping day(s)</label>
+                            <frontend_type>text</frontend_type>
+							<config_path>nowshop/productfeed/max</config_path>
+                            <sort_order>4</sort_order>
+							<comment>Maximum number of days before the product is shipped.0 indicates same day shipping. </comment>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </max>
+                    </fields>
+                </product>
+                <order_api translate="label" module="nowshop">
+                    <label>Order API</label>
+                    <sort_order>30</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+						<email translate="label comment" module="nowshop">
+                            <label>Email Associated with NowShop Retailer Account</label>
+                            <frontend_type>text</frontend_type>
+							<config_path>nowshop/order_api/email</config_path>
+                            <sort_order>1</sort_order>
+							<comment><![CDATA[<a target="_blank" href="http://nowshop.com/how_it_works">Start selling products on NowShop!</a>]]>
+							</comment>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </email>
+                        <key translate="label comment" module="nowshop">
+                            <label>Order API secret key</label>
+                            <frontend_type>text</frontend_type>
+							<config_path>nowshop/order_api/key</config_path>
+                            <sort_order>2</sort_order>
+							<comment><![CDATA[<button style="margin-top: 5px;" onclick="javascript:window.open('https://nowshop.com/settings/edit', 'apiwizard','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, ,left=100, top=100, width=380, height=470'); return false;" class="scalable" type="button" id="nowshop_retailer_wizard">
+												<span><span><span>Get Order Api Key from NowShop </span></span></span>
+											  </button>
+											 ]]>
+							</comment>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </key>
+						<!-- <can_invoice>
+							<label>Invoice Order Paid by NowShop</label>
+                            <frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<config_path>nowshop/order_api/can_invoice</config_path>
+                            <sort_order>3</sort_order>
+							<comment>Generate Invoice of Orders placed from NowShop.</comment>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+						</can_invoice> -->
+						<can_email>
+							<label>Send Order Email</label>
+                            <frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<config_path>nowshop/order_api/can_email</config_path>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+						</can_email>
+                    </fields>
+                </order_api>
+            </groups>
+        </nowshop_account>
+	</sections>
+</config>

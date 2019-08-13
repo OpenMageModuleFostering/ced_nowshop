@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+ * NowShop
+ *
+ * NOTICE OF LICENS
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to support@nowshop.com so we can send you a copy immediately.
+ *
+ * @category    NowShop
+ * @package     NowShop_Synchronize
+ * @author 		Asheesh Singh<asheeshsingh@cedcoss.com>
+ * @copyright   Copyright NowShop 2012 - 2014 (http://nowshop.com/)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+	<menu>
+		<nowshop module="nowshop" translate="title">
+			<title>Sell On NowShop</title>
+			<sort_order>80</sort_order> 
+			<children>
+				<categoryfeed moduel="nowshop" translate="title">
+					<title>Categories Feed</title>
+					<sort_order>10</sort_order>
+					<action>nowshop/adminhtml_categoryfeed/index</action>
+				</categoryfeed>
+				<productfeed module="nowshop" translate="title">
+					<title>Products Feed</title>
+					<sort_order>20</sort_order>
+					<action>nowshop/adminhtml_productfeed/index</action>
+				</productfeed>
+				<settings module="nowshop" translate="title">
+					<title>Configuration</title>
+					<sort_order>30</sort_order>
+					<action>adminhtml/system_config/edit/section/nowshop_account/</action>
+				</settings>
+				
+			</children>
+		</nowshop>		
+	</menu>
+	<acl>
+		<resources>			<all>				<title>Allow Everything</title>
+			</all> 
+			<admin>				<children>
+					<system>
+                        <children>
+							<config>
+								<children>
+									<nowshop_account>
+										<title>Now Shop System Settings</title>
+										<sort_order>10</sort_order>
+									</nowshop_account>
+								</children>
+							</config>
+						</children>
+                    </system>
+					<nowshop module="nowshop" translate="title">
+						<title>Sell On NowShop</title>
+						<sort_order>20</sort_order> 						<children>
+							<categoryfeed module="laybuy" translate="title">
+								<title>Categoryies Feed</title>
+								<children>										
+									<view translate="title">
+										<title>View Categories</title>
+										<sort_order>10</sort_order> 												
+									</view>	
+									<list translate="title">
+										<title>List Categories</title>
+										<sort_order>20</sort_order> 
+									</list>
+								</children> 
+							</categoryfeed>	
+							<productfeed module="laybuy" translate="title">
+								<title>Products Feed</title>
+								<children>										
+									<view translate="title">
+										<title>View Products</title>										<sort_order>10</sort_order> 												
+									</view>	
+									<list translate="title">
+										<title>List Products</title>
+										<sort_order>20</sort_order> 
+									</list>
+								</children> 
+							</productfeed>
+						</children>
+					</nowshop>
+				</children>
+			</admin>
+		</resources>
+	</acl>
+</config>

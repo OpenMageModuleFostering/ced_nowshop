@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NowShop
+ *
+ * NOTICE OF LICENS
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to support@nowshop.com so we can send you a copy immediately.
+ *
+ * @category    NowShop
+ * @package     NowShop_NowShopPayment
+ * @author 		Asheesh Singh<asheeshsingh@cedcoss.com>
+ * @copyright   Copyright NowShop 2012 - 2014 (http://nowshop.com/)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+	<modules>
+		<NowShop_NowShopPayment>
+			<version>1.0.0</version>
+			<author>ASHEESH SINGH (asheeshsingh@cedcoss.com)</author>
+		</NowShop_NowShopPayment>
+	</modules>
+	<global>
+		<blocks>
+			<nowshoppayment>
+				<class>NowShop_NowShopPayment_Block</class>
+			</nowshoppayment>
+		</blocks>
+		<models>
+			<nowshoppayment>
+				<class>NowShop_NowShopPayment_Model</class>
+			</nowshoppayment>
+		</models>
+		<resources>
+			<nowshoppayment_setup>
+				<setup>
+					<module>NowShop_NowShopPayment</module>
+				</setup>
+				<connection>
+					<use>core_setup</use>
+				</connection>
+			</nowshoppayment_setup>
+			<nowshoppayment_write>
+				<connection>
+					<use>core_write</use>
+				</connection>
+			</nowshoppayment_write>
+			<nowshoppayment_read>
+				<connection>
+					<use>core_read</use>
+				</connection>
+			</nowshoppayment_read>
+		</resources>
+	</global>
+	<default>
+		<payment>
+			<nowshop>
+				<active>1</active>
+				<model>nowshoppayment/nowshop</model>
+				<order_status>pending</order_status>
+				<title>Now Shop</title>
+				<payment_action>sale</payment_action>
+				<allowspecific>0</allowspecific>
+			</nowshop>
+		</payment>
+		<nowshop>
+			<setting>
+				<debug>0</debug>
+			</setting>
+		</nowshop>
+	</default>
+</config>
