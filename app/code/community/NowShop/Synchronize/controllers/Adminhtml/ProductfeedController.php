@@ -23,7 +23,29 @@
 class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml_Controller_Action {
 	
 	const EXCULDED_ATTRIBUTES = 'name,description,price,short_description,sku,special_price,fixed_special_price,image,small_image,thumbnail,media_gallery,options_container';
-	protected $_ndebug = null;	
+	protected $_ndebug = null;
+	protected $_storeId = null;
+	protected $_colors = null;
+	protected $_sizes = null;
+	
+	/**
+	 * get allowed color attributes
+	 */
+	public function getColors() {
+		if(empty($this->_colors))
+			$this->_colors = explode(',',Mage::getStoreConfig('nowshop/productfeed/color',$this->_storeId));
+		return $this->_colors;
+	}
+	
+	/**
+	 * get allowed size attributes
+	 */
+	public function getSizes() {
+		if(empty($this->_sizes))
+			$this->_sizes = explode(',', Mage::getStoreConfig('nowshop/productfeed/size',$this->_storeId));
+		return $this->_sizes;
+	}
+	
 	/**
      * Initialize titles, navigation
      * @return NowShop_Synchronize_Adminhtml_ProductFeedController
@@ -65,7 +87,9 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 												)));
 				$feed = $feed->getFirstItem()->load()->getData('product_ids');
 				$feed = explode(',',$feed);
+				
 				$relistedIds = array_intersect($productIds,$feed);
+				/* print_r($relistedIds);die; */
 				/* $productIds = array_diff($productIds,$feed); */
 				
 				$allowedCategoryIds = Mage::getModel('nowshop/cfeed')->getCollection()->addFieldToFilter('status',1);
@@ -80,6 +104,7 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 					
 					$loadedcollection = $this->getLayout()->getBlockSingleton("nowshop/adminhtml_feed_grid")->manualInit();
 					$store = $loadedcollection->getStore();
+					$this->_storeId = $store->getId();
 					$currency = $store->getBaseCurrency()->getCode();
 					$taxHelper = Mage::helper('tax');
 					$isvatincluded = (int)$taxHelper->priceIncludesTax();
@@ -96,19 +121,33 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 						$data = array();
 						$infoData = array();
 						$feedData = array();
+						$sortOrder = array();
 						$existProductCollection = Mage::getModel('nowshop/feed')->getCollection()
 																  ->addFieldToSelect('product_xml_data')
 																  ->addFieldToFilter('product_id',array('nin'=>$relistedIds))
 																  ->addFieldToFilter('status',array('eq'=>1));
 						foreach($existProductCollection as $existProduct){
-							$data['product'][] = json_decode($existProduct->getData('product_xml_data'),true);
+							$temData = array();
+							$tempData = json_decode($existProduct->getData('product_xml_data'),true);
+							if($tempData && is_array($tempData) && count($tempData) > 0 && isset($tempData['sku']) && $tempData['sku']) {
+								/* $data['product'][] = $tempData; */
+								if(isset($tempData['parentsku'])) {
+									if(!isset($sortOrder[$tempData['parentsku']][0]))
+										$sortOrder[$tempData['parentsku']][0] = array();
+									$sortOrder[$tempData['parentsku']][] = $tempData;
+								} elseif(!isset($tempData['parentsku']) && $tempData['type']=='master') {
+									$sortOrder[$tempData['sku']][0] = $tempData;
+								} elseif($tempData && is_array($tempData) && count($tempData) > 0 && isset($tempData['sku']) && $tempData['sku']) {
+									$data['product'][] = $tempData;
+								}
+							}
 						}
 						
 						foreach($productIds as $productId){
-						
+							
 							$product = Mage::getModel('catalog/product')->load($productId);
 							$brandValue = '';
-							if($product->getStatus()==1){	
+							if($product->getStatus()==1) {	
 								$stockItem = $product->getStockItem();
 								$allowedQty = Mage::getStoreConfig('nowshop/productfeed/qty',$store->getId());
 								if($allowedQty >= 0){
@@ -185,6 +224,7 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 									$variants = $this->getOptions($product);
 								}
 								if(count($variants)>0){
+									
 									foreach($variants as $name=>$value){
 										if($value!=''){
 											$variant[] = array('@attributes' => array(
@@ -202,9 +242,12 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 									$info['variants']['variant'] = $variant;
 								}									
 								$attributes = $this->attributes($product->getAttributeSetId());
-								
+								$EXCULDED_ATTRIBUTES = explode(',',self::EXCULDED_ATTRIBUTES);
 								foreach($attributes as $attribute){
 									if(!in_array($attribute->getData('attribute_code'),$EXCULDED_ATTRIBUTES) && ($value = $product->getData($attribute->getData('attribute_code'))) && $attribute->getData('frontend_label')){
+										if($attribute->usesSource()) {
+											$value = $product->getAttributeText($attribute->getData('attribute_code'));
+										}
 										$info['attributes']['attribute'][] = array('@attributes' => array(
 																								'name' => $attribute->getData('frontend_label'),
 																					),
@@ -212,7 +255,7 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 																				);
 									}
 								}
-								if($categoryIds = $product->getCategoryIds()){
+								if($categoryIds = $product->getCategoryIds()) {
 									foreach($categoryIds as $id){
 										if(in_array($id,$allowedCategoryIds)){
 											$info['categories']['category'][] = array('@attributes' => array(
@@ -227,16 +270,39 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 								} else {
 									$infoData[$product->getId()] = json_encode($info);
 								}
-									
-								$data['product'][] = $info;		
-							}else{
+								
+								if(isset($info['parentsku'])) {
+									if(!isset($sortOrder[$info['parentsku']][0]))
+										$sortOrder[$info['parentsku']][0] = array();
+									$sortOrder[$info['parentsku']][] = $info;
+								} elseif(!isset($info['parentsku']) && $info['type']=='master') {
+									$sortOrder[$info['sku']][0] = $info;
+								} elseif($info && is_array($info) && count($info) > 0 && isset($info['sku']) && $info['sku']) {
+									$data['product'][] = $info;
+								}
+							} else {
 								$relistedIds = array_values(array_diff($relistedIds,array($product->getId())));
 								$productIds = array_values(array_diff($productIds,array($product->getId())));
 							}
 						}
-					
-						$xml = NowShop_Synchronize_Helper_Arraytoxml::createXML('products', $data);
+						if(count($sortOrder)) {
+							foreach($sortOrder as $parentSku=>$sortedValue){
+								if(is_array($sortedValue) && count($sortedValue) >1) {
+									foreach($sortedValue as $key=>$value) {
+										if(is_array($value) && count($value) > 0) {
+											$data['product'][] = $value;
+										} else {
+											break;
+										}
+									}
+								}
+							}
+						}
 						
+						/* print_r($data['product']);die; */
+						$xml = NowShop_Synchronize_Helper_Arraytoxml::createXML('products', $data);
+						/* header('Content-type: application/xml'); */
+						/* echo $xml->saveXML();die; */
 						$arraytoxml = Mage::helper('nowshop/arraytoxml');
 						$schema = $arraytoxml->getSchema();
 						if($xml->schemaValidate($schema)){
@@ -276,7 +342,7 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 					}else{
 						Mage::getSingleton('adminhtml/session')->addError($this->__('Selected item(s) are already in feed.Please try different products.'));
 					}	
-				}elseif($this->getRequest()->getParam('onnowshop') == 'remove'){
+				} elseif($this->getRequest()->getParam('onnowshop') == 'remove') {
 					/* foreach ($productIds as $id) {
 						$product = Mage::getSingleton('nowshop/feed')
 										->loadByProductId($id)
@@ -286,7 +352,7 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 					$this->_getSession()->addSuccess(
 						$this->__('Total of %d product(s) were successfully removed form listing queue.', count($productIds))
 					);
-				}else{
+				} else {
 					$this->_getSession()->addError(
 						$this->__('No action specified.')
 					);
@@ -349,6 +415,8 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 	
 	protected function getOptions($product, $parentIds = array()){
 		$attributeValues = array();
+		$noColorAttr = true;
+		$noSizeAttr = true;
 		if($product->getTypeId()=='simple'){
 			$productType = '';
 			$productId = 0;
@@ -367,23 +435,50 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 			$productId = $product->getId();
 			$parent = $product;
 		}
+		/* print_r($this->getColors());
+		echo "<hr>";
+		print_r($this->getSizes());
+		die; */
 		if($productType!=''){
 			switch($productType){
 				case 'configurable' : foreach ($parent->getTypeInstance()->getConfigurableAttributes() as $attribute){
-										if(count($parentIds)>0){
-											$attributeValues[$attribute->getProductAttribute()->getAttributeCode()] = $product->getAttributeText($attribute->getProductAttribute()->getAttributeCode());
-										}else{
-											$attributeValues[$attribute->getProductAttribute()->getAttributeCode()] = '';
+										$attrCode = $attribute->getProductAttribute()->getAttributeCode();
+										if(in_array($attribute->getProductAttribute()->getAttributeCode(),$this->getColors())) {
+											$attrCode ='Color';
+											$noColorAttr = false;
+										} elseif(in_array($attribute->getProductAttribute()->getAttributeCode(),$this->getSizes())) {
+										 	$attrCode ='Size';
+											$noSizeAttr = false;
+										}
+										
+										if(count($parentIds)>0) {
+											$attributeValues[$attrCode] = $product->getAttributeText($attribute->getProductAttribute()->getAttributeCode());
+										} else {
+											$attributeValues[$attrCode] = '';
 										}
 									  }
 									  break;
 			}
 		}
+		if ($noColorAttr) {
+			if(count($parentIds)>0){
+				$attributeValues['Color'] = 'One Color';
+			} else {
+				$attributeValues['Color'] = '';
+			}
+		}
+		if ($noSizeAttr) {
+			if(count($parentIds)>0){
+				$attributeValues['Size'] = 'One Size';
+			} else {
+				$attributeValues['Size'] = '';
+			}
+		}
 		return $attributeValues;
 	}
 	
-	protected function setListed($fileName,$feedData = array()){
-		if(Mage::helper('nowshop')->uploadViaFtp($fileName)){
+	protected function setListed($fileName,$feedData = array()) {
+		if(Mage::helper('nowshop')->uploadViaFtp($fileName)) {
 			$coreResource   = Mage::getSingleton('core/resource');
 			$feedTable      = $coreResource->getTableName('nowshop/feed');
 			$conn = $coreResource->getConnection('write');
@@ -395,15 +490,20 @@ class NowShop_Synchronize_Adminhtml_ProductfeedController extends Mage_Adminhtml
 	
 	protected function setReListed($feedData = array(), $infoData = array()){
 		if(count($feedData)>0 && count($infoData)>0){
-			foreach($feedData as $productId){
-				Mage::getModel('nowshop/feed')->loadByProductId($productId)
-											  ->setData('product_xml_data',$infoData[$productId])
-											  ->setUpdatedAt(date('Y-m-d H:i:s'))
-											  ->save();
+			try {
+				foreach($feedData as $productId){
+					
+					Mage::getModel('nowshop/feed')->loadByProductId($productId)
+												  ->setData('product_xml_data',$infoData[$productId])
+												  ->setUpdatedAt(date('Y-m-d H:i:s'))
+												  ->save();
+				}
+				return true;
+			} catch (Exception $e) {
+				return false;
 			}
-			return true;
 		}
-		return false;
+		return true;
 	}
 	
 	protected function attributes($setId) {

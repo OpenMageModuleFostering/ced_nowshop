@@ -68,34 +68,34 @@ class NowShop_Synchronize_Helper_Data extends Mage_Core_Helper_Abstract{
 	
 	public function uploadViaFtp($file=''){
 		if(!strlen(Mage::getStoreConfig('nowshop/ftp/host')) || !strlen(Mage::getStoreConfig('nowshop/ftp/username')) || !strlen(Mage::getStoreConfig('nowshop/ftp/password'))){
+			Mage::log('Error: Ftp Credentials Not Found..!!',null,'nowshop_ftp.log');
 			return false;
 		}
-		$ftp_server 	= Mage::getStoreConfig('nowshop/ftp/host');
-		$ftp_user_name	= Mage::getStoreConfig('nowshop/ftp/username');
-		$ftp_user_pass	= Mage::getStoreConfig('nowshop/ftp/password');
+		$ftp_server 	= trim(Mage::getStoreConfig('nowshop/ftp/host'));
+		$ftp_user_name	= trim(Mage::getStoreConfig('nowshop/ftp/username'));
+		$ftp_user_pass	= trim(Mage::getStoreConfig('nowshop/ftp/password'));
 		$remote_file_name = basename($file);
 
-
-		/* set up basic connection */
-		$conn_id = ftp_connect($ftp_server);
-
-		/* login with username and password */
-		$login_result = ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
+		try {
+			/* set up basic connection */
+			$ftp = new NowShop_Synchronize_Helper_Ftp("http://$ftp_user_name:$ftp_user_pass@$ftp_server");
+			
+			/* upload a file */
 		
-		/* upload a file */
-		/* Initiate */
-		$ret = ftp_nb_put($conn_id, $remote_file_name, $file, FTP_BINARY, ftp_size($remote_file_name));
-
-		while ($ret == FTP_MOREDATA) {
-		   /* Continue uploading... */
-		   $ret = ftp_nb_continue($conn_id);
-		}
-		if ($ret != FTP_FINISHED) {
-		   ftp_close($conn_id); 
-		   return false;
-		}else{
-		   ftp_close($conn_id); 
-		   return true;
+			$ret = $ftp->nbput($remote_file_name, $file, FTP_ASCII, $ftp->size($remote_file_name));
+			
+			while ($ret == NowShop_Synchronize_Helper_Ftp::MOREDATA) {
+			   // Continue uploading...
+			   $ret = $ftp->nb_continue();
+			}
+			if ($ret != NowShop_Synchronize_Helper_Ftp::FINISHED) {
+			   Mage::log('Error: There was an error uploading the file('.$file.')',null,'nowshop_ftp.log');
+			   return false;
+			}
+			return true;
+		} catch (FtpException $e) {
+			Mage::log('Error: '.$e->getMessage(),null,'nowshop_ftp.log');
+			return false;
 		}
 	}
 }
