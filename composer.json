@@ -1,7 +1,7 @@
 {
-    "name": "OpenMageModuleFostering\/Ced_NowShop",
+    "name": "openmage-module-fostering\/ced_nowshop",
     "type": "magento-module",
-    "license": "Open-Software-License-(OSL-3.0)",
+    "license": "OSL-3.0",
     "homepage": "",
     "description": "NowShop Integration",
     "authors": [
